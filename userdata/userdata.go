@@ -5,19 +5,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"os"
 	"strings"
 )
 
-func DefaultUserdata() (*Userdata, error) {
-	f, err := os.Open("/etc/ec2-user-data.txt")
-	if err != nil {
-		return nil, err
-	}
-	return NewUserdata(f), nil
-}
-
-func NewUserdata(in io.Reader) *Userdata {
+func New(in io.Reader) *Userdata {
 	lines := getLines(in)
 	envmap := getMap(lines)
 	u := &Userdata{envmap, nil, nil}
@@ -32,6 +23,20 @@ func (u *Userdata) Set(key, value string) {
 
 func (u *Userdata) Get(key string) string {
 	return u.data[key]
+}
+
+func (u *Userdata) Del(key string) {
+	delete(u.data, key)
+	u.setJson()
+}
+
+func (u *Userdata) Ok() bool { return u.err == nil }
+
+func (u *Userdata) Error() string {
+	if !u.Ok() {
+		return u.err.Error()
+	}
+	return ""
 }
 
 func (u *Userdata) Read(p []byte) (int, error) {
@@ -61,7 +66,7 @@ func getLines(f io.Reader) []string {
 	var line string
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		line = string.TrimPrefix(scanner.Text(), "export")
+		line = strings.TrimPrefix(scanner.Text(), "export")
 		line = strings.Trim(line, " \r\n\t")
 		if !ignore(line) {
 			lines = append(lines, line)

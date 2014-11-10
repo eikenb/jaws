@@ -22,7 +22,7 @@ var expected_json = []byte(`{
 
 func TestUserdata(t *testing.T) {
 	ud_reader := bytes.NewReader(test_userdata)
-	ud := NewUserdata(ud_reader)
+	ud := New(ud_reader)
 	ud.Set("zoe", "zoom")
 	out, _ := ioutil.ReadAll(ud)
 	assert.Equal(t, out, expected_json)

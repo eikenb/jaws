@@ -1,11 +1,14 @@
 
-A very simple little library to read a file of shell script style variables as
-is exported by AWS ASGs (auto-scaling-groups), though it would work for any
-file containing shell variables.
+A very simple little library to read a file of shell script style variables. It
+takes input as an io.Reader, reads it in, strips spurious data and converts it
+to a map[string]string. It only supports some minor changing and exporting to
+Json.
 
-The user-data is obtained either by reading one of a couple different files [1]
-or by grabbing the output from the meta data url [2].
+I used this for AWS ASG user-data. It stores data in a couple different files
+[1] or makes it accessible from the meta data url [2]. I wanted it as simple as
+possible.
 
 [1] /etc/default/ec2-user-data  /etc/ec2-user-data.txt
 [2] curl http://169.254.169.254/2008-02-01/user-data
+
 

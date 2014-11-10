@@ -12,3 +12,21 @@ possible.
 [2] curl http://169.254.169.254/2008-02-01/user-data
 
 
+Example usage:
+
+    package main
+
+    import (
+        "fmt"
+        "io/ioutil"
+        "os"
+
+        "github.com/eikenb/aws-tools/userdata"
+    )
+
+    func main() {
+        f, _ := os.Open("/etc/ec2-user-data.txt")
+        ud := userdata.New(f)
+        json_bytes, _ := ioutil.ReadAll(ud)
+        fmt.Println(string(json_bytes))
+    }

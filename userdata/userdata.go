@@ -61,8 +61,8 @@ func getLines(f io.Reader) []string {
 	var line string
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		line = strings.Trim(scanner.Text(), " \r\n\t")
-		line = string.TrimPrefix(line, "export ")
+		line = string.TrimPrefix(scanner.Text(), "export")
+		line = strings.Trim(line, " \r\n\t")
 		if !ignore(line) {
 			lines = append(lines, line)
 		}

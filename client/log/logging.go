@@ -1,6 +1,7 @@
 package log
 
 import (
+	"fmt"
 	"log"
 	"log/syslog"
 	"os"
@@ -8,20 +9,23 @@ import (
 
 // by default, log to stderr
 var lg = log.New(os.Stderr, "", log.Ltime|log.Lshortfile)
-var Print = lg.Print
-var Fatal = lg.Fatal
+
+// Our logging calls, needed to override default calldepth
+func Print(v ...interface{}) { lg.Output(3, fmt.Sprint(v...)) }
+func Fatal(v ...interface{}) {
+	lg.Output(3, fmt.Sprint(v...))
+	os.Exit(1)
+}
 
 // log to syslog in production
 // set in 'release' file specified with tagging
 func Syslog() {
 	var priority = syslog.LOG_WARNING | syslog.LOG_USER
 	var flags = log.LstdFlags | log.Lshortfile
-
-	var lg, err = syslog.NewLogger(priority, flags)
+	var err error
+	lg, err = syslog.NewLogger(priority, flags)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	Print = lg.Print
-	Fatal = lg.Fatal
 }

@@ -22,7 +22,7 @@ func (r Reply) Do(req *http.Request) (*http.Response, error) {
 	if r.Reqtester != nil {
 		r.Reqtester(req)
 	}
-	resp := &http.Response{StatusCode: r.Status, Body: testbody(r.Body)}
+	resp := &http.Response{StatusCode: r.Status, Body: Testbody(r.Body)}
 	return resp, nil
 }
 
@@ -47,6 +47,6 @@ func NewReplies(rs ...Reply) *replies {
 
 type body struct{ buf *bytes.Buffer }
 
-func testbody(b []byte) io.ReadCloser      { return &body{bytes.NewBuffer(b)} }
+func Testbody(b []byte) io.ReadCloser      { return &body{bytes.NewBuffer(b)} }
 func (b body) Read(bs []byte) (int, error) { return b.buf.Read(bs) }
 func (b body) Close() error                { return nil }

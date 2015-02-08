@@ -1,19 +1,18 @@
 package userdata
 
 import (
+	"io"
 	"io/ioutil"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-var test_userdata = []byte(`
-export FOO=bar
-export ZED=die
-iam=ignored
-me too
-#export me=three
-`)
+func testData() io.Reader {
+	Ec2UserdataPath = "./testdata/ec2-user-data"
+	var ud_reader, _ = Reader(false)
+	return ud_reader
+}
 
 func commonTests(t *testing.T, ud Userdata, expected_json []byte) {
 	ud.Set("zoe", "zoom")

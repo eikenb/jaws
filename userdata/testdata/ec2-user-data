@@ -1,0 +1,6 @@
+
+export FOO=bar
+export ZED=die
+iam=ignored
+me too
+#export me=three

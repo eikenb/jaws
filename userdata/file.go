@@ -9,12 +9,15 @@ import (
 	"time"
 )
 
-// change this for testing
+// Location of ec2-user-data file.
+// change this for testing or when otherwise desired
 var Ec2UserdataPath = "/etc/default/ec2-user-data"
 
 // Limit retrying to something so we will eventually exit with an error
 var Retry = 60
 var Sleep = time.Second
+
+// Eventual error given if reading fails
 var Timeout = errors.New("Timeout trying to read " + Ec2UserdataPath)
 
 // Get the userdata file, optionally block until it is present.

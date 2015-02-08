@@ -10,14 +10,16 @@ import (
 func List(in io.Reader) *UdList {
 	lines := getLines(in)
 	envmap := makeList(lines)
-	u := &UdList{envmap, nil}
+	u := &UdList{envmap}
 	return u
 }
 
+// Set a value (uniform api with map)
 func (u *UdList) Set(key, value string) {
 	u.Data = append(u.Data, pair{key, value})
 }
 
+// Get a value (uniform api with map)
 func (u *UdList) Get(key string) string {
 	for _, p := range u.Data {
 		if p.Name == key {
@@ -27,6 +29,7 @@ func (u *UdList) Get(key string) string {
 	return ""
 }
 
+// Delete a value (uniform api with map)
 func (u *UdList) Del(key string) {
 	idx := len(u.Data)
 	for i, p := range u.Data {
@@ -39,15 +42,7 @@ func (u *UdList) Del(key string) {
 	u.Data = u.Data[:len(u.Data)-1]
 }
 
-func (u *UdList) Ok() bool { return u.err == nil }
-
-func (u *UdList) Error() string {
-	if !u.Ok() {
-		return u.err.Error()
-	}
-	return ""
-}
-
+// Json reader for list
 func (u *UdList) Reader() io.Reader {
 	js, err := json.Marshal(u)
 	if err != nil {
@@ -65,7 +60,6 @@ type pair struct {
 
 type UdList struct {
 	Data []pair `json:"data"`
-	err  error
 }
 
 func makeList(lines []string) []pair {

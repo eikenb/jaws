@@ -9,12 +9,10 @@ import (
 const ws = " \r\n\t"
 
 type Userdata interface {
-	error
 	Set(string, string)
 	Del(string)
 	Get(string) string
 	Reader() io.Reader
-	Ok() bool
 }
 
 // Return all shell variable export lines (like 'export foo=bar')

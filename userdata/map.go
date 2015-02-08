@@ -7,30 +7,26 @@ import (
 	"strings"
 )
 
+// Make the userdata as a dict-like map.
 func Map(in io.Reader) *UdMap {
 	lines := getLines(in)
 	envmap := makeMap(lines)
-	u := &UdMap{envmap, nil}
+	u := &UdMap{envmap}
 	return u
 }
 
-func (u *UdMap) Set(key, value string) { u.data[key] = value }
+// Set a value (uniform api with list)
+func (u *UdMap) Set(key, value string) { u.Data[key] = value }
 
-func (u *UdMap) Get(key string) string { return u.data[key] }
+// Get a value (uniform api with list)
+func (u *UdMap) Get(key string) string { return u.Data[key] }
 
-func (u *UdMap) Del(key string) { delete(u.data, key) }
+// Delete a value (uniform api with list)
+func (u *UdMap) Del(key string) { delete(u.Data, key) }
 
-func (u *UdMap) Ok() bool { return u.err == nil }
-
-func (u *UdMap) Error() string {
-	if !u.Ok() {
-		return u.err.Error()
-	}
-	return ""
-}
-
+// Json reader for list
 func (u *UdMap) Reader() io.Reader {
-	js, err := json.Marshal(u.data)
+	js, err := json.Marshal(u.Data)
 	if err != nil {
 		return strings.NewReader(err.Error())
 	}
@@ -40,8 +36,7 @@ func (u *UdMap) Reader() io.Reader {
 // --------------------------------------------------------------------
 
 type UdMap struct {
-	data map[string]string
-	err  error
+	Data map[string]string
 }
 
 func makeMap(lines []string) map[string]string {

@@ -10,6 +10,6 @@ var expected_listjson = []byte(
 
 func TestUserdataList(t *testing.T) {
 	ud_reader := bytes.NewReader(test_userdata)
-	ud := NewList(ud_reader)
+	ud := List(ud_reader)
 	commonTests(t, ud, expected_listjson)
 }

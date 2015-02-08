@@ -7,33 +7,29 @@ import (
 	"strings"
 )
 
-func NewMap(in io.Reader) *Map {
+func Map(in io.Reader) *UdMap {
 	lines := getLines(in)
 	envmap := makeMap(lines)
-	u := &Map{envmap, nil}
+	u := &UdMap{envmap, nil}
 	return u
 }
 
-func (u *Map) Set(key, value string) {
-	u.data[key] = value
-}
+func (u *UdMap) Set(key, value string) { u.data[key] = value }
 
-func (u *Map) Get(key string) string {
-	return u.data[key]
-}
+func (u *UdMap) Get(key string) string { return u.data[key] }
 
-func (u *Map) Del(key string) { delete(u.data, key) }
+func (u *UdMap) Del(key string) { delete(u.data, key) }
 
-func (u *Map) Ok() bool { return u.err == nil }
+func (u *UdMap) Ok() bool { return u.err == nil }
 
-func (u *Map) Error() string {
+func (u *UdMap) Error() string {
 	if !u.Ok() {
 		return u.err.Error()
 	}
 	return ""
 }
 
-func (u *Map) Reader() io.Reader {
+func (u *UdMap) Reader() io.Reader {
 	js, err := json.Marshal(u.data)
 	if err != nil {
 		return strings.NewReader(err.Error())
@@ -43,7 +39,7 @@ func (u *Map) Reader() io.Reader {
 
 // --------------------------------------------------------------------
 
-type Map struct {
+type UdMap struct {
 	data map[string]string
 	err  error
 }

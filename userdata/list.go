@@ -7,18 +7,18 @@ import (
 	"strings"
 )
 
-func NewList(in io.Reader) *List {
+func List(in io.Reader) *UdList {
 	lines := getLines(in)
 	envmap := makeList(lines)
-	u := &List{envmap, nil}
+	u := &UdList{envmap, nil}
 	return u
 }
 
-func (u *List) Set(key, value string) {
+func (u *UdList) Set(key, value string) {
 	u.Data = append(u.Data, pair{key, value})
 }
 
-func (u *List) Get(key string) string {
+func (u *UdList) Get(key string) string {
 	for _, p := range u.Data {
 		if p.Name == key {
 			return p.Value
@@ -27,7 +27,7 @@ func (u *List) Get(key string) string {
 	return ""
 }
 
-func (u *List) Del(key string) {
+func (u *UdList) Del(key string) {
 	idx := len(u.Data)
 	for i, p := range u.Data {
 		if p.Name == key {
@@ -39,16 +39,16 @@ func (u *List) Del(key string) {
 	u.Data = u.Data[:len(u.Data)-1]
 }
 
-func (u *List) Ok() bool { return u.err == nil }
+func (u *UdList) Ok() bool { return u.err == nil }
 
-func (u *List) Error() string {
+func (u *UdList) Error() string {
 	if !u.Ok() {
 		return u.err.Error()
 	}
 	return ""
 }
 
-func (u *List) Reader() io.Reader {
+func (u *UdList) Reader() io.Reader {
 	js, err := json.Marshal(u)
 	if err != nil {
 		return strings.NewReader(err.Error())
@@ -63,7 +63,7 @@ type pair struct {
 	Value string `json:"value"`
 }
 
-type List struct {
+type UdList struct {
 	Data []pair `json:"data"`
 	err  error
 }

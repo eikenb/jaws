@@ -21,7 +21,7 @@ Example usage:
         "io/ioutil"
         "os"
 
-        "github.com/eikenb/aws-tools/userdata"
+        "github.com/eikenb/jaws/userdata"
     )
 
     func main() {

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/eikenb/aws-tools/client/log"
+	"github.com/eikenb/jaws/client/log"
 	"github.com/smartystreets/go-aws-auth"
 )
 

@@ -1,4 +1,4 @@
-package client
+package jaws
 
 import (
 	"bytes"
@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/eikenb/jaws/client/log"
+	"github.com/eikenb/jaws/log"
 	"github.com/smartystreets/go-aws-auth"
 )
 

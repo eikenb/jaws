@@ -3,7 +3,7 @@ package metadata
 import (
 	"net/http"
 
-	"github.com/eikenb/jaws/client"
+	"github.com/eikenb/jaws"
 )
 
 // Access to EC2 metadata.
@@ -26,9 +26,9 @@ func Lookup(key string) (string, error) {
 	var body []byte
 	var err error
 	get := func() error { r, err = Get(key); return err }
-	err = client.Timeout(1).Retry(get, 3)
+	err = jaws.Timeout(1).Retry(get, 3)
 	if err == nil {
-		body, err = client.ReadBody(r)
+		body, err = jaws.ReadBody(r)
 	}
 	if err != nil {
 		return "", err

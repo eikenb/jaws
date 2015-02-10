@@ -8,8 +8,13 @@ import (
 )
 
 func TestContentLengthable(t *testing.T) {
-	data := testbody([]byte{'f', 'o', 'o'})
-	newdata := contentLengthable(data)
+	rawdata := []byte{'f', 'o', 'o'}
+
+	newdata := contentLengthable(Testbody(rawdata))
 	var buf *bytes.Buffer
 	assert.IsType(t, buf, newdata)
+
+	rdr := bytes.NewReader(rawdata)
+	newdata = contentLengthable(rdr)
+	assert.IsType(t, rdr, newdata)
 }

@@ -36,6 +36,9 @@ func (c client) do(req *http.Request) (r *http.Response, e error) {
 	awsauth.Sign4(req)
 	do := func() error { r, e = c.Cli.Do(req); return e }
 	if e := Timeout(5).Retry(do, 3); e == nil {
+		if r.StatusCode < 200 || r.StatusCode > 299 {
+			e = errors.New("HTTP call failed with status: " + r.Status)
+		}
 		return r, e
 	}
 	if e == TimeoutError {

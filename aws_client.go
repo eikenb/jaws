@@ -20,14 +20,12 @@ type doer interface {
 	Do(*http.Request) (*http.Response, error)
 }
 
+var Aws = New(true)
+
 // custom client to allow replacing doer for testing
 type client struct {
 	Cli doer
 }
-
-var Aws *client
-
-func init() { Aws = New() }
 
 func New() *client { return &client{Cli: &http.Client{}} }
 

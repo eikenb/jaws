@@ -20,6 +20,7 @@ type doer interface {
 	Do(*http.Request) (*http.Response, error)
 }
 
+var BadStatus = errors.New("HTTP call failed bad status.")
 var Aws = New(true)
 
 // custom client to allow replacing doer for testing
@@ -35,7 +36,7 @@ func (c client) do(req *http.Request) (r *http.Response, e error) {
 	do := func() error { r, e = c.Cli.Do(req); return e }
 	if e := Timeout(5).Retry(do, 3); e == nil {
 		if r.StatusCode < 200 || r.StatusCode > 299 {
-			e = errors.New("HTTP call failed with status: " + r.Status)
+			e = BadStatus
 		}
 		return r, e
 	}

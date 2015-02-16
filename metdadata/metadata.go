@@ -1,6 +1,8 @@
 package metadata
 
 import (
+	"strings"
+
 	"github.com/eikenb/jaws"
 )
 
@@ -10,17 +12,18 @@ import (
 type metadata struct {
 	ip      string
 	version string
+	path    string
 	cache   chan map[string]string
 }
 
-func New(ip, version string) *metadata {
+func New(ip, version, path string) *metadata {
 	cache := make(chan map[string]string, 1)
 	cache <- make(map[string]string)
 	return &metadata{ip: ip, version: version, cache: cache}
 }
 
 // Provide latest version as default.
-var Latest = New("169.254.169.254", "latest")
+var Latest = New("169.254.169.254", "latest", "meta-data")
 var Lookup = Latest.Lookup
 
 // http client
@@ -28,7 +31,8 @@ var client = jaws.New(false)
 
 // Build the URL
 func (md metadata) Url(key string) string {
-	return "http://" + md.ip + "/" + md.version + "/meta-data/" + key
+	return "http://" +
+		strings.Join([]string{md.ip, md.version, md.path, key}, "/")
 }
 
 // Get one value from metadata (with key with meta-data/ as root)

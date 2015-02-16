@@ -1,43 +1,52 @@
 package metadata
 
 import (
-	"net/http"
-
 	"github.com/eikenb/jaws"
 )
 
 // Access to EC2 metadata.
 // http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
 
-// make http.Get() a var to allow for swapping out in tests
-var Get = func(key string) (*http.Response, error) {
-	return http.Get("http://169.254.169.254/latest/meta-data/" + key)
+type metadata struct {
+	ip      string
+	version string
+	cache   chan map[string]string
+}
+
+func New(ip, version string) *metadata {
+	cache := make(chan map[string]string, 1)
+	cache <- make(map[string]string)
+	return &metadata{ip: ip, version: version, cache: cache}
+}
+
+// Provide latest version as default.
+var Latest = New("169.254.169.254", "latest")
+var Lookup = Latest.Lookup
+
+// http client
+var client = jaws.New(false)
+
+// Build the URL
+func (md metadata) Url(key string) string {
+	return "http://" + md.ip + "/" + md.version + "/meta-data/" + key
 }
 
 // Get one value from metadata (with key with meta-data/ as root)
-func Lookup(key string) (string, error) {
-	c := <-cache
-	defer func() { cache <- c }()
+func (md metadata) Lookup(key string) (string, error) {
+	c := <-md.cache
+	defer func() { md.cache <- c }()
 	if v, ok := c[key]; ok {
 		return v, nil
 	}
 
-	var r *http.Response
+	r, err := client.Get(md.Url(key))
 	var body []byte
-	var err error
-	get := func() error { r, err = Get(key); return err }
-	err = jaws.Timeout(1).Retry(get, 3)
 	if err == nil {
 		body, err = jaws.ReadBody(r)
 	}
 	if err != nil {
 		return "", err
-	} // no metadata == very bad
+	} // no metadata == bad
 	c[key] = string(body)
 	return c[key], nil
 }
-
-// cache in a channel because I hate locks
-var cache = make(chan map[string]string, 1)
-
-func init() { cache <- make(map[string]string) }

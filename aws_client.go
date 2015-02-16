@@ -25,14 +25,19 @@ var Aws = New(true)
 
 // custom client to allow replacing doer for testing
 type client struct {
-	Cli doer
+	Cli       doer
+	useAwssig bool
 }
 
-func New() *client { return &client{Cli: &http.Client{}} }
+func New(sign bool) *client {
+	return &client{Cli: &http.Client{}, useAwssig: sign}
+}
 
 // client.Do with auth and timeout added
 func (c client) do(req *http.Request) (r *http.Response, e error) {
-	awsauth.Sign4(req)
+	if c.useAwssig {
+		awsauth.Sign4(req)
+	}
 	do := func() error { r, e = c.Cli.Do(req); return e }
 	if e := Timeout(5).Retry(do, 3); e == nil {
 		if r.StatusCode < 200 || r.StatusCode > 299 {

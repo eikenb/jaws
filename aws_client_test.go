@@ -3,6 +3,7 @@ package jaws
 import (
 	"bytes"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,6 +23,11 @@ func TestContentLengthable(t *testing.T) {
 
 var content = []byte("foo")
 var domain = "http://foo.com"
+
+func init() {
+	// go-aws-auth tries local metadata port if creds are not set
+	os.Setenv("AWS_ACCESS_KEY_ID", "prevent timeout in go-aws-auth")
+}
 
 func TestGet(t *testing.T) {
 	Aws.Cli = Reply{Status: 200, Body: content}
@@ -59,7 +65,7 @@ func TestErr(t *testing.T) {
 	Aws.Cli = Reply{Status: 500, Body: content}
 	r, e := Aws.Get(domain)
 	assert.Equal(t, r.StatusCode, 500)
-	assert.Equal(t, e.Error(), "HTTP call failed bad status.")
+	assert.Equal(t, e, BadStatus)
 	body, e := ReadBody(r)
 	assert.Nil(t, e)
 	assert.Equal(t, body, content)

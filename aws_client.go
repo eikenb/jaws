@@ -24,17 +24,17 @@ var BadStatus = errors.New("HTTP call failed bad status.")
 var Aws = New(true)
 
 // custom client to allow replacing doer for testing
-type client struct {
+type Client struct {
 	Cli       doer
 	useAwssig bool
 }
 
-func New(sign bool) *client {
-	return &client{Cli: &http.Client{}, useAwssig: sign}
+func New(sign bool) *Client {
+	return &Client{Cli: &http.Client{}, useAwssig: sign}
 }
 
 // client.Do with auth and timeout added
-func (c client) do(req *http.Request) (r *http.Response, e error) {
+func (c Client) do(req *http.Request) (r *http.Response, e error) {
 	if c.useAwssig {
 		awsauth.Sign4(req)
 	}
@@ -52,7 +52,7 @@ func (c client) do(req *http.Request) (r *http.Response, e error) {
 }
 
 // get + better do
-func (c client) Get(url string) (*http.Response, error) {
+func (c Client) Get(url string) (*http.Response, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (c client) Get(url string) (*http.Response, error) {
 }
 
 // post w/ content-type + better do
-func (c client) Post(url string, data url.Values) (*http.Response, error) {
+func (c Client) Post(url string, data url.Values) (*http.Response, error) {
 	req, err := http.NewRequest("POST", url, strings.NewReader(data.Encode()))
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (c client) Post(url string, data url.Values) (*http.Response, error) {
 }
 
 // put w/ content-type, date headers + better do
-func (c client) Put(url string, data io.Reader) (*http.Response, error) {
+func (c Client) Put(url string, data io.Reader) (*http.Response, error) {
 	data = contentLengthable(data)
 	req, err := http.NewRequest("PUT", url, data)
 	if err != nil {

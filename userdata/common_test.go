@@ -5,12 +5,13 @@ import (
 	"io/ioutil"
 	"testing"
 
+	"github.com/eikenb/jaws"
 	"github.com/stretchr/testify/assert"
 )
 
 func testData() io.Reader {
-	Ec2UserdataPath = "./testdata/ec2-user-data"
-	var ud_reader, _ = Reader(false)
+	userdata.Mock(jaws.Reply{Status: 200, Body: test_data})
+	var ud_reader, _ = Reader()
 	return ud_reader
 }
 

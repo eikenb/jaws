@@ -10,15 +10,15 @@ responses.
 
 userdata
 --------
-A lib to parse a shell formatted ec2-user-data file written by an AWS ASG on
-the instance. It can read the default ec2-user-data file off the system or be
-provided an alternative. It only understands exported shell variables as might
-be included by shell scripts as this is a common format as it has multiple
-uses.
+A lib to parse a shell formatted EC2 user-data string of exported environment
+variables. It pulls the data from the instance metadata url (see below) and
+converts it to either a map[string]string struct or an slice of name/value
+structs (useful for json encoding).
 
 metadata
 --------
 A lib to access the meta-data of an EC2 AWS instance. It hits the local 169
-address and caches the results.
+address and caches the results. It is designed to return single values, not a
+struct of all the metadata.
 
 
